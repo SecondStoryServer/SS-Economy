@@ -1,0 +1,7 @@
+name: SS-Economy
+version: @version@
+api-version: "1.15"
+main: me.syari.ss.economy.Main
+author: sya_ri
+depend:
+  - "SS-Core"
