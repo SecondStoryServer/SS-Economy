@@ -78,14 +78,17 @@ object CommandCreator : OnEnable {
         ) { sender, args ->
             fun help() {
                 sendHelp(
-
+                        "money check" to "所持金を確認します",
+                        "money rank [ページ数]" to "所持金ランキングを表示します"
                 ).ifOp(
-
+                        "money set" to "所持金を設定します",
+                        "money inc" to "所持金を加算します",
+                        "money dec" to "所持金を減算します"
                 )
             }
 
             when (args.whenIndex(0)) {
-                "check" -> {
+                null, "check" -> {
                     val player = if (args.size == 1) {
                         sender as? OfflinePlayer ?: return@createCommand sendError(ErrorMessage.OnlyPlayer)
                     } else {
