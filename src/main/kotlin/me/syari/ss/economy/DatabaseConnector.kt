@@ -57,7 +57,9 @@ object DatabaseConnector : OnEnable {
                 set(UUIDPlayer(uniqueId), value)
             }
 
-        fun set(uuidPlayer: UUIDPlayer, money: Int) {
+        fun OfflinePlayer.hasMoney(money: Int) = this.money <= money
+
+        private fun set(uuidPlayer: UUIDPlayer, money: Int) {
             sql?.use {
                 if (money != 0) {
                     executeUpdate("""
@@ -72,7 +74,7 @@ object DatabaseConnector : OnEnable {
             moneyDataCache[uuidPlayer] = money
         }
 
-        fun get(uuidPlayer: UUIDPlayer): Int {
+        private fun get(uuidPlayer: UUIDPlayer): Int {
             return moneyDataCache.getOrPut(uuidPlayer) { getFromSQL(uuidPlayer) }
         }
 
