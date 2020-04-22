@@ -10,6 +10,6 @@ class Main : JavaPlugin() {
 
     override fun onEnable() {
         economyPlugin = this
-        OnEnable.register(CommandCreator)
+        OnEnable.register(CommandCreator, ConfigLoader, DatabaseConnector)
     }
 }
