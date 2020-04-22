@@ -5,6 +5,9 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class Main : JavaPlugin() {
     companion object {
+        /**
+         * 経済プラグインのインスタンス
+         */
         lateinit var economyPlugin: JavaPlugin
     }
 

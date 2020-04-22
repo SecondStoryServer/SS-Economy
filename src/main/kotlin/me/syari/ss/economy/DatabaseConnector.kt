@@ -8,28 +8,63 @@ import me.syari.ss.economy.Main.Companion.economyPlugin
 import org.bukkit.OfflinePlayer
 
 object DatabaseConnector : OnEnable {
+    /**
+     * 起動時にテーブルを作成します
+     */
     override fun onEnable() {
         createTable()
     }
 
     private var sql: MySQL? = null
 
+    /**
+     * データベースの設定を変更します
+     * @param host ホスト名
+     * @param port ポート番号
+     * @param database データベース名
+     * @param user ユーザー名
+     * @param password パスワード
+     */
     fun setConfig(host: String?, port: Int?, database: String?, user: String?, password: String?) {
         sql = MySQL.create(host, port, database, user, password)
     }
 
+    /**
+     * データベースに接続できるか確認します
+     * @return [ConnectState]
+     */
     fun checkConnect(): ConnectState {
         return ConnectState.get(sql?.canConnect())
     }
 
+    /**
+     * データベース接続結果
+     * @param message 日本語メッセージ
+     */
     enum class ConnectState(val message: String) {
+        /**
+         * 成功
+         */
         Success("成功しました"),
+
+        /**
+         * 失敗
+         */
         CatchException("失敗しました"),
+
+        /**
+         * 設定不足
+         */
         NullError("必要な設定が足りていません");
 
         val isSuccess get() = this == Success
 
         companion object {
+            /**
+             * Boolean を ConnectState に変換します
+             * @param bool canConnect(), use() の結果
+             * @return [ConnectState]
+             */
             fun get(bool: Boolean?): ConnectState {
                 return when (bool) {
                     true -> Success
@@ -40,6 +75,10 @@ object DatabaseConnector : OnEnable {
         }
     }
 
+    /**
+     * データベースにテーブルを作成します
+     * @return [ConnectState]
+     */
     fun createTable(): ConnectState {
         return ConnectState.get(sql?.use {
             executeUpdate("""
@@ -48,15 +87,26 @@ object DatabaseConnector : OnEnable {
         })
     }
 
+    /**
+     * プレイヤーの所持金関連
+     */
     object MoneyData {
         private val moneyDataCache = mutableMapOf<UUIDPlayer, Int>()
 
+        /**
+         * プレイヤーの所持金
+         */
         var OfflinePlayer.money: Int
             get() = get(UUIDPlayer(uniqueId))
             set(value) {
                 set(UUIDPlayer(uniqueId), value)
             }
 
+        /**
+         * プレイヤーが指定金額所持しているか返します
+         * @param money 指定金額
+         * @return [Boolean]
+         */
         fun OfflinePlayer.hasMoney(money: Int) = this.money <= money
 
         private fun set(uuidPlayer: UUIDPlayer, money: Int) {
@@ -91,29 +141,57 @@ object DatabaseConnector : OnEnable {
             return money
         }
 
+        /**
+         * キャッシュの名前一覧を取得します
+         * @return [List]<[String]>
+         */
         fun getCacheList(): List<String> {
             return moneyDataCache.mapNotNull { it.key.name }
         }
 
+        /**
+         * 指定プレイヤーのキャッシュを削除します
+         * @param uuidPlayer 指定プレイヤー
+         */
         fun deleteCache(uuidPlayer: UUIDPlayer) {
             moneyDataCache.remove(uuidPlayer)
         }
 
+        /**
+         * 全プレイヤーのキャッシュを削除します
+         */
         fun clearCache() {
             moneyDataCache.clear()
         }
     }
 
+    /**
+     * 所持金のランキング関連
+     */
     object MoneyRank {
+        /**
+         * ランキングデータ
+         * @param rank 順位
+         * @param uuidPlayer プレイヤー
+         * @param money 所持金
+         */
         data class RankData(
                 val rank: Int,
                 val uuidPlayer: UUIDPlayer,
                 val money: Int
         ) {
+            /**
+             * ランダムデータを文字列に変換します
+             * @return [String]
+             */
             override fun toString() = "&6$rank &f${uuidPlayer.name} &a${money}JPY"
         }
 
         private val rankDataList = mutableListOf<RankData>()
+
+        /**
+         * 読み込んだランキングの最終ページ
+         */
         var lastPage = 0
             private set
 
@@ -155,6 +233,11 @@ object DatabaseConnector : OnEnable {
             }
         }
 
+        /**
+         * ランキングの指定したページを取得します
+         * @param page 指定ページ
+         * @return [List]<[RankData]>
+         */
         fun get(page: Int): List<RankData> {
             if (page < 1) return get(1)
             load()

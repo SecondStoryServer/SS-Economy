@@ -18,6 +18,9 @@ import me.syari.ss.economy.Main.Companion.economyPlugin
 import org.bukkit.OfflinePlayer
 
 object CommandCreator : OnEnable {
+    /**
+     * コマンドを作成します
+     */
     override fun onEnable() {
         createCommand(economyPlugin, "economy", "Economy",
                 tab { _, _ -> element("config", "database") },
