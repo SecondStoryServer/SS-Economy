@@ -15,19 +15,17 @@ object ConfigLoader : OnEnable {
         loadConfig(console)
     }
 
+    private val defaultConfig = mapOf(
+        "sql.host" to "localhost", "sql.port" to 3306, "sql.database" to "", "sql.user" to "", "sql.password" to ""
+    )
+
     /**
      * コンフィグを読み込みます
      * @param output メッセージ出力先
      */
     fun loadConfig(output: CommandSender) {
-        config(economyPlugin, output, "config.yml") {
-            DatabaseConnector.setConfig(
-                    get("sql.host", ConfigDataType.STRING),
-                    get("sql.port", ConfigDataType.INT),
-                    get("sql.database", ConfigDataType.STRING),
-                    get("sql.user", ConfigDataType.STRING),
-                    get("sql.password", ConfigDataType.STRING)
-            )
+        config(economyPlugin, output, "config.yml", default = defaultConfig) {
+            DatabaseConnector.sql = get("sql", ConfigDataType.MYSQL)
         }
     }
 }

@@ -16,19 +16,7 @@ object DatabaseConnector : OnEnable {
         createTable()
     }
 
-    private var sql: MySQL? = null
-
-    /**
-     * データベースの設定を変更します
-     * @param host ホスト名
-     * @param port ポート番号
-     * @param database データベース名
-     * @param user ユーザー名
-     * @param password パスワード
-     */
-    fun setConfig(host: String?, port: Int?, database: String?, user: String?, password: String?) {
-        sql = MySQL.create(host, port, database, user, password)
-    }
+    internal var sql: MySQL? = null
 
     /**
      * データベースに接続できるか確認します
@@ -43,11 +31,16 @@ object DatabaseConnector : OnEnable {
      * @return [ConnectState]
      */
     fun createTable(): ConnectState {
-        return ConnectState.get(sql?.use {
-            executeUpdate("""
-                CREATE TABLE IF NOT EXISTS Money(UUID VARCHAR(36) PRIMARY KEY, Value INT);
-            """.trimIndent())
-        })
+        return sql?.run {
+            use {
+                executeUpdate(
+                    """
+                    CREATE TABLE IF NOT EXISTS Money(UUID VARCHAR(36) PRIMARY KEY, Value INT);
+                """.trimIndent()
+                )
+            } ?: return ConnectState.CatchException
+            ConnectState.Success
+        } ?: ConnectState.NullError
     }
 
     /**

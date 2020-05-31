@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
     implementation("com.destroystokyo.paper:paper-api:1.15.2-R0.1-SNAPSHOT")
-    implementation("me.syari.ss.core:SS-Core:2.6")
+    implementation("me.syari.ss.core:SS-Core:2.10")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 }
 
