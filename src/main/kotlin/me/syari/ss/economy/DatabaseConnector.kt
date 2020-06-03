@@ -2,8 +2,9 @@ package me.syari.ss.economy
 
 import me.syari.ss.core.auto.OnEnable
 import me.syari.ss.core.player.UUIDPlayer
-import me.syari.ss.core.scheduler.CustomScheduler.runLater
+import me.syari.ss.core.scheduler.CreateScheduler.runLater
 import me.syari.ss.core.sql.ConnectState
+import me.syari.ss.core.sql.ConnectState.Companion.checkConnect
 import me.syari.ss.core.sql.MySQL
 import me.syari.ss.economy.Main.Companion.economyPlugin
 import org.bukkit.OfflinePlayer
@@ -23,7 +24,7 @@ object DatabaseConnector : OnEnable {
      * @return [ConnectState]
      */
     fun checkConnect(): ConnectState {
-        return ConnectState.get(sql?.canConnect())
+        return sql.checkConnect()
     }
 
     /**
