@@ -17,17 +17,20 @@ import me.syari.ss.economy.DatabaseConnector.createTable
 import me.syari.ss.economy.Main.Companion.economyPlugin
 import org.bukkit.OfflinePlayer
 
-object CommandCreator : OnEnable {
+object CommandCreator: OnEnable {
     /**
      * コマンドを作成します
      */
     override fun onEnable() {
-        createCommand(economyPlugin, "economy", "Economy",
-                tab { _, _ -> element("config", "database") },
-                tab("config") { _, _ -> element("reload") },
-                tab("database") { _, _ -> element("create", "check", "cache") },
-                tab("database cache") { _, _ -> element("delete", "clear") },
-                tab("database cache delete") { _, _ -> element(getCacheList()) }
+        createCommand(
+            economyPlugin,
+            "economy",
+            "Economy",
+            tab { _, _ -> element("config", "database") },
+            tab("config") { _, _ -> element("reload") },
+            tab("database") { _, _ -> element("create", "check", "cache") },
+            tab("database cache") { _, _ -> element("delete", "clear") },
+            tab("database cache delete") { _, _ -> element(getCacheList()) }
         ) { sender, args ->
             when (args.whenIndex(0)) {
                 "config" -> {
@@ -74,19 +77,14 @@ object CommandCreator : OnEnable {
             }
         }
 
-        createCommand(economyPlugin, "money", "Money",
-                tab { sender, _ ->
-                    element("check", "rank").joinIfOp(sender, "set", "inc", "dec")
-                }
-        ) { sender, args ->
+        createCommand(economyPlugin, "money", "Money", tab { sender, _ ->
+            element("check", "rank").joinIfOp(sender, "set", "inc", "dec")
+        }) { sender, args ->
             fun help() {
                 sendHelp(
-                        "money check" to "所持金を確認します",
-                        "money rank [ページ数]" to "所持金ランキングを表示します"
+                    "money check" to "所持金を確認します", "money rank [ページ数]" to "所持金ランキングを表示します"
                 ).ifOp(
-                        "money set" to "所持金を設定します",
-                        "money inc" to "所持金を加算します",
-                        "money dec" to "所持金を減算します"
+                    "money set" to "所持金を設定します", "money inc" to "所持金を加算します", "money dec" to "所持金を減算します"
                 )
             }
 

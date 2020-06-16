@@ -7,7 +7,7 @@ import me.syari.ss.core.config.dataType.ConfigDataType
 import me.syari.ss.economy.Main.Companion.economyPlugin
 import org.bukkit.command.CommandSender
 
-object ConfigLoader : OnEnable {
+object ConfigLoader: OnEnable {
     /**
      * 起動時にコンフィグを読み込みます
      */

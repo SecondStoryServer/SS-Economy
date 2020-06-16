@@ -3,7 +3,7 @@ package me.syari.ss.economy
 import me.syari.ss.core.auto.OnEnable
 import org.bukkit.plugin.java.JavaPlugin
 
-class Main : JavaPlugin() {
+class Main: JavaPlugin() {
     companion object {
         /**
          * 経済プラグインのインスタンス

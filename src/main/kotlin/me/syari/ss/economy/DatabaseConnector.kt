@@ -9,7 +9,7 @@ import me.syari.ss.core.sql.MySQL
 import me.syari.ss.economy.Main.Companion.economyPlugin
 import org.bukkit.OfflinePlayer
 
-object DatabaseConnector : OnEnable {
+object DatabaseConnector: OnEnable {
     /**
      * 起動時にテーブルを作成します
      */
@@ -66,16 +66,23 @@ object DatabaseConnector : OnEnable {
          */
         fun OfflinePlayer.hasMoney(money: Int) = this.money <= money
 
-        private fun set(uuidPlayer: UUIDPlayer, money: Int) {
+        private fun set(
+            uuidPlayer: UUIDPlayer,
+            money: Int
+        ) {
             sql?.use {
                 if (money != 0) {
-                    executeUpdate("""
+                    executeUpdate(
+                        """
                         INSERT INTO Money VALUE ('$uuidPlayer', $money) ON DUPLICATE KEY UPDATE Money = $money;
-                    """.trimIndent())
+                    """.trimIndent()
+                    )
                 } else {
-                    executeUpdate("""
+                    executeUpdate(
+                        """
                         DELETE FROM Money WHERE UUID = '$uuidPlayer' LIMIT 1;
-                    """.trimIndent())
+                    """.trimIndent()
+                    )
                 }
             }
             moneyDataCache[uuidPlayer] = money
@@ -88,9 +95,11 @@ object DatabaseConnector : OnEnable {
         private fun getFromSQL(uuidPlayer: UUIDPlayer): Int {
             var money = 0
             sql?.use {
-                val result = executeQuery("""
+                val result = executeQuery(
+                    """
                     SELECT Value FROM Money WHERE UUID = '$uuidPlayer' LIMIT 1;
-                """.trimIndent())
+                """.trimIndent()
+                )
                 if (result.next()) {
                     money = result.getInt(1)
                 }
@@ -133,9 +142,9 @@ object DatabaseConnector : OnEnable {
          * @param money 所持金
          */
         data class RankData(
-                val rank: Int,
-                val uuidPlayer: UUIDPlayer,
-                val money: Int
+            val rank: Int,
+            val uuidPlayer: UUIDPlayer,
+            val money: Int
         ) {
             /**
              * ランダムデータを文字列に変換します
@@ -155,7 +164,8 @@ object DatabaseConnector : OnEnable {
         private fun load() {
             if (rankDataList.isNotEmpty()) return
             sql?.use {
-                val result = executeQuery("""
+                val result = executeQuery(
+                    """
                     SELECT UUID, Value, Rank FROM (
                         SELECT
                             CASE
@@ -176,7 +186,8 @@ object DatabaseConnector : OnEnable {
                         FROM (SELECT @rank := 1, @lastValue := null, @count := 0) AS DummyTable,
                         Money ORDER BY Value DESC
                     ) AS ResultTable;
-                """.trimIndent())
+                """.trimIndent()
+                )
                 while (result.next()) {
                     val uuidPlayer = UUIDPlayer.create(result.getString(1)) ?: continue
                     val money = result.getInt(2)
